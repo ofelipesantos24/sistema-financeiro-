@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Livro Caixa — Controle Financeiro</title>
+<meta name="description" content="Controle financeiro pessoal simples, no estilo de um livro caixa. Tudo salvo no seu navegador.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📒</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="paper-texture"></div>
+
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="masthead-left">
+      <span class="eyebrow">Escrituração pessoal · desde <span id="anoAbertura">2026</span></span>
+      <h1>Livro&nbsp;Caixa</h1>
+      <p class="subtitle">Cada entrada, cada saída, na linha.</p>
+    </div>
+    <div class="stamp-wrap">
+      <div class="stamp" id="stamp">
+        <span class="stamp-label" id="stampLabel">SALDO</span>
+        <span class="stamp-value" id="stampValue">R$ 0,00</span>
+        <span class="stamp-sub" id="stampSub">EM DIA</span>
+      </div>
+    </div>
+  </header>
+
+  <section class="ledger-summary" aria-label="Resumo do mês">
+    <div class="sum-card sum-in">
+      <span class="sum-label">Entradas</span>
+      <span class="sum-value" id="totalEntradas">R$ 0,00</span>
+      <span class="sum-count" id="countEntradas">0 lançamentos</span>
+    </div>
+    <div class="sum-card sum-out">
+      <span class="sum-label">Saídas</span>
+      <span class="sum-value" id="totalSaidas">R$ 0,00</span>
+      <span class="sum-count" id="countSaidas">0 lançamentos</span>
+    </div>
+    <div class="sum-card sum-balance">
+      <span class="sum-label">Saldo do mês</span>
+      <span class="sum-value" id="totalMes">R$ 0,00</span>
+      <span class="sum-count" id="mesReferencia">—</span>
+    </div>
+  </section>
+
+  <div class="main-grid">
+
+    <section class="ticket" aria-label="Novo lançamento">
+      <div class="ticket-perf" aria-hidden="true"></div>
+      <h2 class="ticket-title">Novo lançamento</h2>
+      <form id="formLancamento" autocomplete="off">
+
+        <div class="field-row toggle-row">
+          <button type="button" class="tipo-btn tipo-entrada active" data-tipo="entrada">
+            <span class="tipo-dot"></span> Entrada
+          </button>
+          <button type="button" class="tipo-btn tipo-saida" data-tipo="saida">
+            <span class="tipo-dot"></span> Saída
+          </button>
+        </div>
+
+        <label class="field">
+          <span>Descrição</span>
+          <input type="text" id="descricao" placeholder="Ex.: Salário, aluguel, mercado…" required maxlength="60">
+        </label>
+
+        <div class="field-pair">
+          <label class="field">
+            <span>Valor (R$)</span>
+            <input type="number" id="valor" placeholder="0,00" min="0" step="0.01" required inputmode="decimal">
+          </label>
+          <label class="field">
+            <span>Data</span>
+            <input type="date" id="data" required>
+          </label>
+        </div>
+
+        <label class="field">
+          <span>Categoria</span>
+          <select id="categoria"></select>
+        </label>
+
+        <button type="submit" class="btn-lancar">Lançar no livro</button>
+      </form>
+    </section>
+
+    <section class="ledger-panel" aria-label="Lançamentos">
+      <div class="ledger-toolbar">
+        <input type="text" id="busca" class="busca" placeholder="Buscar lançamento…">
+        <select id="filtroMes" class="filtro"></select>
+        <select id="filtroCategoria" class="filtro">
+          <option value="">Todas categorias</option>
+        </select>
+        <select id="filtroTipo" class="filtro">
+          <option value="">Entradas e saídas</option>
+          <option value="entrada">Só entradas</option>
+          <option value="saida">Só saídas</option>
+        </select>
+      </div>
+
+      <div class="ledger-table-wrap">
+        <table class="ledger-table">
+          <thead>
+            <tr>
+              <th class="col-data">Data</th>
+              <th class="col-desc">Descrição</th>
+              <th class="col-cat">Categoria</th>
+              <th class="col-valor">Valor</th>
+              <th class="col-acao" aria-label="Ações"></th>
+            </tr>
+          </thead>
+          <tbody id="corpoTabela">
+          </tbody>
+        </table>
+        <div class="empty-state" id="estadoVazio">
+          <p>Nenhum lançamento por aqui ainda.</p>
+          <p class="empty-sub">Preencha o formulário ao lado para abrir o livro.</p>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <section class="chart-section" aria-label="Gastos por categoria">
+    <h2 class="chart-title">Saídas por categoria <span id="chartMes">— este mês</span></h2>
+    <div class="chart-bars" id="chartBars"></div>
+    <p class="chart-empty" id="chartEmpty">Sem saídas registradas neste mês.</p>
+  </section>
+
+  <footer class="footer-note">
+    <p>Os dados ficam salvos apenas neste navegador (localStorage) — nada é enviado a servidor nenhum.</p>
+    <button type="button" id="btnExportar" class="link-btn">Exportar backup (.json)</button>
+    <span class="dot-sep">·</span>
+    <button type="button" id="btnImportar" class="link-btn">Importar backup</button>
+    <input type="file" id="inputImportar" accept="application/json" hidden>
+    <span class="dot-sep">·</span>
+    <button type="button" id="btnLimpar" class="link-btn link-danger">Apagar tudo</button>
+  </footer>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

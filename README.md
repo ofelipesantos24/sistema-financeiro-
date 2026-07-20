@@ -2,7 +2,7 @@
 
 Um controle financeiro pessoal simples, rápido e sem cadastro — no estilo de um livro caixa. Rode direto no navegador, sem backend, sem conta, sem enviar seus dados pra lugar nenhum.
 
-**[👉 Ver demo ao vivo](#)** *(atualize este link depois de ativar o GitHub Pages — veja abaixo)*
+**[👉 https://ofelipesantos24.github.io/sistema-financeiro-/
 
 ## Funcionalidades
 
